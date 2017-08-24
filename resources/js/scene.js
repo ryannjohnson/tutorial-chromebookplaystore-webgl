@@ -1,3 +1,4 @@
+import anime from 'animejs';
 const THREE = window.THREE = require('three');
 require('../../node_modules/three/examples/js/modifiers/SubdivisionModifier');
 
@@ -105,8 +106,50 @@ export class SpaceDroidScene {
    */
   onLoad() {
 
-    // Render a single frame.
-    this.renderer.render(this.scene, this.camera);
+    // Establish a new subset of properties.
+    this.android.custom = {
+      rotationSpeed: .002,
+    }
+
+    /**
+     * Called on every frame refresh (up to 60 fps on most screens).
+     *
+     * @param {number} timestamp - Milliseconds since page has loaded.
+     * @return {void}
+     */
+    const renderFrame = function(timestamp) {
+
+      // Like setTimeout, but waits for the next available browser
+      // repaint.
+      requestAnimationFrame(renderFrame);
+
+      // Change the Android's local rotation by some fixed increment
+      // every frame. Be aware that frames aren't always rendered for
+      // various reasons (window is minimized), so it'll pick up
+      // wherever it left off on the next render.
+      this.android.rotation.y += parseFloat(this.android.custom.rotationSpeed);
+
+      // Render the new frame.
+      this.renderer.render(this.scene, this.camera);
+
+    }.bind(this);
+
+    // Set an animejs timeline for the body of the android. Animejs
+    // changes values in relation to real-time, so even if some frames
+    // aren't rendered in time, animejs will act as if they were and
+    // skip ahead.
+    anime({
+      targets: this.androidGroup.position,
+      z: 0,
+      easing: 'easeInOutQuart',
+      loop: true,
+      direction: 'alternate',
+      duration: 10000,
+    });
+
+    // It's important to render the first frame inside a
+    // requestAnimationFrame call in order to avoid some startup lag.
+    requestAnimationFrame(renderFrame);
 
   }
 
