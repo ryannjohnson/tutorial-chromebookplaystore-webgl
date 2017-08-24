@@ -7,18 +7,17 @@ The code for the [tutorial at ryannjohnson.com](https://ryannjohnson.com/using-a
 Run the following in your terminal:
 
 ```bash
-$ npm install && npm run build
+$ npm install
+$ npm run build
+$ npm run server
 ```
 
-You can then open up `public/index.html` in your browser directly or alternatively run `npm run server` and navigate to <http://127.0.0.1:8080/>.
+You can then navigate to <http://127.0.0.1:8080/> or whatever addresses your terminal displays.
 
 ### Development
 
-The `package.json` file contains some scripts for watching changes to files.
+The `package.json` file contains some scripts for watching changes to files. To automatically compile changes to the Javascript files, open up a new terminal and run:
 
 ```bash
-$ npm run watch-css &
-$ npm run watch-js &
+$ npm run watch-js
 ```
-
-As written above, these commands run in the background. Pull them forward with `fg` and cancel them with `ctrl+c` before exiting your terminal.
