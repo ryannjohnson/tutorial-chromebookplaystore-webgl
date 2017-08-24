@@ -99,6 +99,40 @@ export class SpaceDroidScene {
 
     });
 
+    // Meteorite assets will be used later during frame rendering.
+    const radius = this.chromeoriteRadius = .5;
+    this.chromeoriteTail = 28;
+    this.chromeoriteSpeedX = (
+      Math.sin(Math.PI / 4) * this.chromeoriteRadius * this.chromeoriteTail / 4
+    );
+    this.chromeoriteSpeedY = (
+      Math.cos(Math.PI / 4) * this.chromeoriteRadius * this.chromeoriteTail / 4
+    );
+    this.meteoriteShape = new THREE.Shape();
+    this.meteoriteShape.moveTo(0, 0);
+    this.meteoriteShape.absarc(0, 0, radius * 2, 0, Math.PI, false);
+    this.meteoriteShape.lineTo(0, -this.chromeoriteTail * radius);
+    this.meteoriteShape.lineTo(radius * 2, 0);
+    this.meteoriteGeometry = new THREE.ShapeBufferGeometry(
+      this.meteoriteShape
+    );
+    const defaultMaterial = {
+      color: new THREE.Color(0x000000),
+      shininess: 0,
+      emissiveIntensity: 1,
+    };
+    this.meteoriteMaterials = [
+      new THREE.MeshPhongMaterial(Object.assign({}, defaultMaterial, {
+        emissive: new THREE.Color(0x0d6fb5),
+      })),
+      new THREE.MeshPhongMaterial(Object.assign({}, defaultMaterial, {
+        emissive: new THREE.Color(0xe52d2a),
+      })),
+      new THREE.MeshPhongMaterial(Object.assign({}, defaultMaterial, {
+        emissive: new THREE.Color(0xfad900),
+      })),
+    ];
+
   }
 
   /**
@@ -110,6 +144,9 @@ export class SpaceDroidScene {
     this.android.custom = {
       rotationSpeed: .002,
     }
+
+    // Keep track of all alive Chromeorites here.
+    this.chromeorites = new Array();
 
     /**
      * Called on every frame refresh (up to 60 fps on most screens).
@@ -128,6 +165,39 @@ export class SpaceDroidScene {
       // various reasons (window is minimized), so it'll pick up
       // wherever it left off on the next render.
       this.android.rotation.y += parseFloat(this.android.custom.rotationSpeed);
+
+      // Advance all the meteorites.
+      for (let i = this.chromeorites.length - 1; i >= 0; i--) {
+        const chromeorite = this.chromeorites[i];
+
+        // The ones far out should be removed.
+        const outY = chromeorite.position.y < -1000;
+        const outX = chromeorite.position.x < -1000;
+        if (outX || outY) {
+          this.scene.remove(chromeorite);
+          this.chromeorites.splice(i, 1);
+          continue;
+        }
+
+        // A fixed amount works fine in 3d space.
+        chromeorite.position.x -= this.chromeoriteSpeedX;
+        chromeorite.position.y -= this.chromeoriteSpeedY;
+
+      }
+
+      // Should we spawn a chromeorite?
+      if (Math.random() <= 0.2) {
+        const material = chooseRandom(this.meteoriteMaterials);
+        const chromeorite = new THREE.Mesh(this.meteoriteGeometry, material);
+        const depth = Math.random();
+        const angle = Math.random() * Math.PI / 2;
+        const x = Math.sin(angle) * depth * 1000 + 300;
+        const y = Math.cos(angle) * depth * 1000 + 300;
+        chromeorite.position.set(x, y, depth * -2000 + 10);
+        chromeorite.rotation.set(0, 0, Math.PI * .75);
+        this.scene.add(chromeorite);
+        this.chromeorites.push(chromeorite);
+      }
 
       // Render the new frame.
       this.renderer.render(this.scene, this.camera);
@@ -166,6 +236,14 @@ export class SpaceDroidScene {
     });
   }
 
+}
+
+
+/**
+ * Helper to choose a random element of an array.
+ */
+function chooseRandom(array) {
+  return array[Math.floor(Math.random() * array.length)];
 }
 
 
