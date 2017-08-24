@@ -153,6 +153,19 @@ export class SpaceDroidScene {
 
   }
 
+  /**
+   * Fires when the user says so.
+   */
+  setTurbo(isEnabled) {
+    anime.remove(this.android.custom);
+    anime({
+      targets: this.android.custom,
+      rotationSpeed: isEnabled ? 0.1 : 0.002,
+      easing: 'linear',
+      duration: 1000,
+    });
+  }
+
 }
 
 
