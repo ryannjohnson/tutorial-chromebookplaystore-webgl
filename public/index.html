@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--
+    These are all the CSS styles we'll need for the project.
+    -->
+    <style>
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-size: 100%;
+        font-family: sans-serif; }
+      body {
+        background: #111622;
+        background: -moz-linear-gradient(top, #111622 0%, #212040 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #111622), color-stop(100%, #212040));
+        background: -webkit-linear-gradient(top, #111622 0%, #212040 100%);
+        background: -o-linear-gradient(top, #111622 0%, #212040 100%);
+        background: -ms-linear-gradient(top, #111622 0%, #212040 100%);
+        background: linear-gradient(to bottom, #111622 0%, #212040 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#111622', endColorstr='#212040', GradientType=1); }
+      body.no-js:before {
+        display: inline-block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -moz-transform: translateX(-50%) translateY(-50%);
+        -o-transform: translateX(-50%) translateY(-50%);
+        -ms-transform: translateX(-50%) translateY(-50%);
+        -webkit-transform: translateX(-50%) translateY(-50%);
+        transform: translateX(-50%) translateY(-50%);
+        content: 'You must enable Javascript to continue.';
+        padding: 20px;
+        font-size: 14px;
+        color: white;
+        background: rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+        width: 66%; }
+        @media screen and (min-width: 768px) {
+          body.no-js:before {
+            width: auto; } }
+      .space-droid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+        z-index: 0; }
+      .space-droid__canvas {
+        position: relative; }
+    </style>
+
+  </head>
+  <body class="no-js">
+
+    <!--
+    Assuming that the user's browser is executing Javascript, this
+    script will remove the `no-js` class from the `<body>` element. If
+    Javascript doesn't fire, then our CSS rules will show a savvy
+    warning message to the user.
+    -->
+    <script id="no-js-script">document.body.className='';document.body.removeChild(document.getElementById('no-js-script'));</script>
+
+    <!--
+    Our animation will be attached to this DOM element. By matter of
+    preference, we'll use the `id` attribute to select this element from
+    Javascript, and we'll use the `class` attribute for its CSS rules.
+    -->
+    <div id="space-droid" class="space-droid"></div>
+
+    <!--
+    Just as the `<link>` asset, this file gets generated when
+    `npm run build` and `npm run watch-js` are executed. This is the
+    code that will inject our animation into the HTML.
+    -->
+    <script src="assets/dist/js/app.js"></script>
+
+  </body>
+</html>
