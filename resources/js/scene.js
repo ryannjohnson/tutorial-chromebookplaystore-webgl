@@ -1,4 +1,5 @@
-const THREE = require('three');
+const THREE = window.THREE = require('three');
+require('../../node_modules/three/examples/js/modifiers/SubdivisionModifier');
 
 
 export class SpaceDroidScene {
@@ -37,19 +38,71 @@ export class SpaceDroidScene {
     this.renderer.domElement.style.opacity = 1;
     element.appendChild(this.renderer.domElement);
 
-    // Sample box to fill our scene.
-    const geometry = new THREE.BoxBufferGeometry(10, 10, 10);
-    const material = new THREE.MeshLambertMaterial({ color: 0x00ffbb });
-    this.sampleMesh = new THREE.Mesh(geometry, material);
-    this.sampleMesh.position.set(0, 0, 0);
-    this.sampleMesh.rotation.set(0, 0, 0);
-    this.scene.add(this.sampleMesh);
+    // When loading external assets, this will help us know when
+    // everything is loaded.
+    this.loadingManager = new THREE.LoadingManager();
+    this.loadingManager.onLoad = this.onLoad.bind(this);
 
-    // Our scene is fully loaded.
-    this.onLoad();
+    // Load the Android model by fetching it from the server.
+    const loader = new THREE.ObjectLoader(this.loadingManager);
+    loader.load("assets/android.json", object => {
+
+      // Save a reference to the loaded android model.
+      this.android = object;
+
+      // Make materials here in three.js.
+      const bodyMaterial = new THREE.MeshToonMaterial({
+        color: new THREE.Color(0xa4ca39),
+        shading: THREE.SmoothShading,
+        shininess: 15,
+      });
+      const eyeMaterial = new THREE.MeshToonMaterial({
+        color: new THREE.Color(0xffffff),
+        emissive: new THREE.Color(0x333333),
+        shading: THREE.SmoothShading,
+      });
+
+      // Will make our blocky model smooth by creating more verticies.
+      // This is exactly how Blender would do it, except that it would
+      // make `android.json` exponentially larger to download.
+      const subdivider = new THREE.SubdivisionModifier(2);
+
+      // Apply materials and subdivision to every piece of geometry
+      // within the loaded model.
+      for (let mesh of this.android.children) {
+        subdivider.modify(mesh.geometry);
+        switch(mesh.material.name) {
+
+          // These names are what they were called in Blender prior to
+          // export. We'll use them now to identify what their materials
+          // should be.
+          case 'lambert2SG':
+            mesh.material = bodyMaterial;
+            break;
+          case 'lambert3SG':
+            mesh.material = eyeMaterial;
+            break;
+
+        }
+      }
+
+      // Nest our android inside a new object so we can manipulate an
+      // extra set of axes while the android spins on its own axes.
+      this.androidGroup = new THREE.Object3D();
+      this.androidGroup.position.set(0, -1, -200);
+      this.androidGroup.rotation.set(deg(5), 0, deg(-45));
+      this.androidGroup.add(this.android);
+      this.android.position.set(0, -10, 0);
+      this.android.rotation.set(Math.PI, 0, 0);
+      this.scene.add(this.androidGroup);
+
+    });
 
   }
 
+  /**
+   * Called once when all the assets are finished loading.
+   */
   onLoad() {
 
     // Render a single frame.
@@ -57,4 +110,12 @@ export class SpaceDroidScene {
 
   }
 
+}
+
+
+/**
+ * Helper to convert degrees to radians.
+ */
+function deg(degrees) {
+  return Math.PI * degrees / 180;
 }
