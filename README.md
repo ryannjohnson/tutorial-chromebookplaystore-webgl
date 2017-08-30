@@ -1,6 +1,8 @@
 # Tutorial: Using three.js and anime.js to make Tell Me When My Chromebook Gets Play Store
 
-The code for the [tutorial at ryannjohnson.com](https://ryannjohnson.com/using-animejs-and-threejs-to-make-tell-me-when-chromebook-gets-play-store/).
+![Android in space](./docs/content/poster.jpg)
+
+The code for the [tutorial at ryannjohnson.github.io](https://ryannjohnson.github.io/tutorial-chromebookplaystore-webgl/).
 
 ## Compile
 
